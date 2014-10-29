@@ -24,6 +24,7 @@ using the prebuilt release on Ubuntu 12.04.
 
 __ prebuilt-release_
 
+
 Required Packages
 ~~~~~~~~~~~~~~~~~
 
@@ -32,9 +33,18 @@ Required Packages
 
 In Ubuntu 12.04 use following commands to install::
 
-  $ sudo apt-get python python-networkx
+  $ sudo apt-get install python python-networkx
 
 
+-----
+Usage
+-----
+
+To analyze a C program, type:
+
+  $ python <path/to/>main.py <path/to/>program.c
+
+Translator will print the verification result on the screen.
 
 
 ----------------
@@ -43,9 +53,6 @@ Prebuilt Release
 .. _prebuilt-release:
 
 * `translator-v0.1-alpha <https://drive.google.com/open?id=0B17ndKIRA_DYb0N4aVE0RVl3MFE&authuser=0>`_
-
-
-
 
 
 -------
