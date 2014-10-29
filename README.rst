@@ -56,7 +56,8 @@ Translator will print the verification result on the screen.
 Prebuilt Release
 ----------------
 
-* `translator-v0.1-alpha <https://drive.google.com/open?id=0B17ndKIRA_DYb0N4aVE0RVl3MFE&authuser=0>`_
+* `translator-v0.1-alpha <https://drive.google.com/open?id=0B17ndKIRA_DYRGQ3Qy1JR0U4TlE&authuser=0>`_
+
 
 
 -------
