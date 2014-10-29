@@ -40,9 +40,11 @@ In Ubuntu 12.04 use following commands to install::
 Usage
 -----
 
-To analyze a C program, type:
+Download and extract our release.
 
-  $ python <path/to/>main.py <path/to/>program.c
+To analyze a C program, type::
+
+  $ python <path/to/>translator/main.py <path/to/>program.c
 
 Translator will print the verification result on the screen.
 
