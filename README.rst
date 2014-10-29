@@ -12,7 +12,7 @@ Currently this project is unstable.
 An experimental version `translator-v0.1-alpha`__ for 2015 Competition on 
 Software Verification is available now.
 
-__ prebuilt-release_
+__ `Prebuilt Release`_
 
 ------------------
 Setup Instructions
@@ -24,7 +24,7 @@ external tools we use.
 Please use `prebuilt release`__. The following setup is for
 using the prebuilt release on Ubuntu 12.04.
 
-__ prebuilt-release_
+__ `Prebuilt Release`_
 
 
 Required Packages
@@ -55,7 +55,6 @@ Translator will print the verification result on the screen.
 ----------------
 Prebuilt Release
 ----------------
-.. _prebuilt-release:
 
 * `translator-v0.1-alpha <https://drive.google.com/open?id=0B17ndKIRA_DYb0N4aVE0RVl3MFE&authuser=0>`_
 
