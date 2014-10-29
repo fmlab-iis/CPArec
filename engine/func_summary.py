@@ -41,10 +41,12 @@ def check_summary(prog_k, S):
     """
     Instantiate Summary to new recursive functions after unwinding
     """
+    # TODO Replace "1" with comprehensive name
     prog_chk.instantiate_summary( new_name, "1", c_summary )
     """
     Add summary assertion at orignal functions that are unwound now
     """
+    # TODO Replace "1" with comprehensive name
     prog_chk.assert_summary( old_name, "1", c_summary )
 
   prog_chk.create_file()
@@ -55,6 +57,6 @@ def check_summary(prog_k, S):
   for func in prog_k.get_unwound_funcs():
     result = basic_analyzer.analyze(prog_chk, func.get_name())
     if not result == 'Pass':
-      return False
+      return 'Error'
  
-  return True
+  return 'Pass'

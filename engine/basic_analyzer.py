@@ -5,6 +5,7 @@ __paths_g = {}
 __default_args_g = []
 
 def set_paths(paths):
+  # TODO Change assert to exception handler
   assert not (paths["bin_file"]=="" or paths["conf_file"]=="" or paths["output_dir"]=="")
   global __paths_g, __default_args_g
   __paths_g = paths

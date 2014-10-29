@@ -87,6 +87,8 @@ class Program:
   def __replace_calls(self, func, old_call, new_call):
     self.__args.extend(["-R", func, old_call, new_call])
 
+# TODO Find a way to keep relation between old and new recursive function
+# TODO Avoid naming conflict caused by adding suffix _0
   def unwind(self, k):
     old_rec_funcs = self.__rec_funcs
     new_rec_funcs = []
@@ -125,6 +127,7 @@ class Program:
   def assert_summary(self, func_name, pre, post):
     self.__args.extend(["-t", func_name, pre, post])
 
+# TODO A more robust way to know if a file is really created
   def create_file(self):
     if not self.__real_file:
       # Do the transformation only when needed
@@ -156,14 +159,17 @@ class Function(object):
   def get_all_parameters_with_scope(self):
     inputs = map(self.add_scope, self.__para_list)
     return self.get_return_parameters() + inputs
+
   def duplicate(self, new_name):
     return Function(
              new_name,
              self.__ret,
              self.__para_list)
 
+# TODO This is because C has no overloading
   def __eq__(self, other):
     return self.__name == other.__name
+
   def __str__(self):
     s = ""
     if self.__ret: s += self.__ret + "="
