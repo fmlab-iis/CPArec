@@ -31,11 +31,12 @@ Required Packages
 ~~~~~~~~~~~~~~~~~
 
 * Python 2.7 or version above
-* Python NetworkX package
+* Python `NetworkX <https://networkx.github.io/>`_ package
+* Python `PyGraphviz <http://networkx.lanl.gov/pygraphviz/index.html>`_ package
 
 In Ubuntu 12.04 use following commands to install::
 
-  $ sudo apt-get install python python-networkx
+  $ sudo apt-get install python python-networkx python-pygraphviz
 
 
 -----
