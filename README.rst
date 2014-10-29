@@ -18,11 +18,11 @@ __ `Prebuilt Release`_
 Setup Instructions
 ------------------
 
-Python script provided in this project is not directly excutable due to varaious
+Python script provided in this project is not directly excutable due to various
 external tools we use. 
 
-Please use `prebuilt release`__. The following setup is for
-using the prebuilt release on Ubuntu 12.04.
+Please use our `prebuilt release`__. The following setup is for using the
+prebuilt release on Ubuntu 12.04.
 
 __ `Prebuilt Release`_
 
