@@ -19,7 +19,9 @@ Setup Instructions
 ------------------
 
 Python script provided in this project is not directly excutable due to varaious
-external tools we use. Please use `prebuilt release`__. The following setup is for
+external tools we use. 
+
+Please use `prebuilt release`__. The following setup is for
 using the prebuilt release on Ubuntu 12.04.
 
 __ prebuilt-release_
