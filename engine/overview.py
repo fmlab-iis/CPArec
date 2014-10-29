@@ -1,4 +1,3 @@
-import pdb
 import basic_analyzer
 
 from approx import unwind
@@ -14,6 +13,7 @@ def run(program):
     return overview(program)
   else:
     print ("No obvious recursion detected.")
+    # TODO Directly use basic_analyzer to analyze
     print ("Abort.")
     return "Unknown"
 
@@ -25,12 +25,13 @@ def overview(program):
   while not complete:
     k = k + 1
 
-    P_k = unwind(program, k)
     print ("Current unwinding depth: " + str(k))
+    P_k = unwind(program, k)
 
     G_main = under_approx(P_k)
-    print ("Analyzing under-approximation")
+    print ("Analyzing under-approximation:")
     result = basic_analyzer.analyze(G_main)
+    print (result)
 
     if result == 'Error' or result == 'Unknown':
       return result
@@ -38,8 +39,10 @@ def overview(program):
     print ("Computing Candidate of Summaries")
     S = compute_summary(P_k, result)
 
-    print ("Checking Summaries")
-    complete = check_summary(P_k, S)
+    print ("Checking Summaries:")
+    result = check_summary(P_k, S)
+    print (result)
+    complete = (result == 'Pass')
 
-  return 'Pass'
+  return result
 

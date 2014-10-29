@@ -61,7 +61,8 @@ class AnalysisResultFactory(object):
 
 class AnalysisResult(object):
   def __init__(self, func_names, output_dir):
-    raise NotImplementedError
+    self._func_list = func_names
+    self._proof_dir = output_dir + '/'
   def __str__(self):
     return self._getResult()
   def __repr__(self):

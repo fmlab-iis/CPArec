@@ -5,11 +5,9 @@ sys.dont_write_bytecode=True
 import engine
 
 design_file = sys.argv[1]
-try:
-  proof = engine.run(design_file)
-except RuntimeError:
-  proof = 'Unknown'
+proof = engine.run(design_file)
 
+# Simple mapping for SVCOMP
 if proof == 'Pass':
   result = "TRUE"
 elif proof == 'Error':

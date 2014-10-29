@@ -22,7 +22,7 @@ rl_mgr.setScriptPath(_abs_path("../var/rl_script"))
 rl_mgr.setOutputPath(_abs_path("../var/rl_summary"))
 
 options = {
-  "bin_file"  :_abs_path("../ext_analyzer/CPAchecker-1.3.4-unix/scripts/cpa.sh") ,
+  "bin_file"  :_abs_path("../ext_analyzer/CPAchecker-1.3.4-unix/scripts/cpa.sh"),
   "conf_file" :_abs_path("../ext_analyzer/CPAchecker-conf/UsedConfiguration.properties"),
   "output_dir":_abs_path("../var/proof")}
 basic_analyzer.set_paths(options)
@@ -31,4 +31,16 @@ basic_analyzer.set_paths(options)
 basic_analyzer.AnalysisResultFactory.add_factory("CPA", CPA_Factory)
 
 def run(design_file):
-  return overview.run( Program(design_file) )
+  try:
+    result = overview.run( Program(design_file) )
+    if result == 'Error':
+      print ((" Error Witness ").center(70, '='))
+      print ("Values changes of variables in main() and global variables")
+      assignment = result.get_variable_assignment()
+      for var, values in assignment.iteritems():
+        if var.startswith('main::') or not '::' in var:
+          print (var + ': ' + str(values))
+  except RuntimeError:
+    result = 'Unknown'
+
+  return result
