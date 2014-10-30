@@ -27,7 +27,11 @@ def _call_tran(p_args, p_input):
   args.extend(["-o", output_name])
   # Set Input File
   args.append(p_input)
-  out_str = subprocess.check_output(args, stderr=subprocess.STDOUT)
+  try:
+    out_str = subprocess.check_output(args, stderr=subprocess.STDOUT)
+  except subprocess.CalledProcessError:
+    print ("Error Program Transformation tool terminates unexpectedly.")
+    raise RuntimeError
   # TODO logging.info(out_str)
 
   return output_name
@@ -42,6 +46,7 @@ class Program:
     # Use unique variable names as actual parameters
     self.__args.append("-s")
 
+    self.__uw_times = 0
     self.__rec_funcs = self.__find_recursive_funcs()
     self.__uwd_funcs = []
 
@@ -90,6 +95,7 @@ class Program:
 # TODO Find a way to keep relation between old and new recursive function
 # TODO Avoid naming conflict caused by adding suffix _0
   def unwind(self, k):
+    self.__uw_times = k
     old_rec_funcs = self.__rec_funcs
     new_rec_funcs = []
 
@@ -126,6 +132,8 @@ class Program:
     self.__args.extend(["-m", func_name, pre, post])
   def assert_summary(self, func_name, pre, post):
     self.__args.extend(["-t", func_name, pre, post])
+  def inline_function_calls(self, func_name):
+    self.__args.extend(["-w", func_name, str(self.__uw_times)])
 
 # TODO A more robust way to know if a file is really created
   def create_file(self):

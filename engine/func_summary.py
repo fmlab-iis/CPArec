@@ -48,9 +48,9 @@ def check_summary(prog_k, S):
     """
     # TODO Replace "1" with comprehensive name
     prog_chk.assert_summary( old_name, "1", c_summary )
+    prog_chk.inline_function_calls( old_name )
 
   prog_chk.create_file()
-
   """
   CheckSummary
   """

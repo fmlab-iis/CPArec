@@ -19,8 +19,8 @@ class CPA_Factory:
           result = (re.search(r"(?P<result>^[A-Z]+)",line[begin:])).group("result")
     stats.close()
  
-    if result == 'TRUE'   : return CPA_Pass(func_names, output_dir)
-    if result == 'FALSE' : return CPA_Error(func_names, output_dir)
+    if result == 'SAFE'   : return CPA_Pass(func_names, output_dir)
+    if result == 'UNSAFE' : return CPA_Error(func_names, output_dir)
     if result == 'UNKNOWN': return Unknown(func_names, output_dir)
  
     assert 0, 'Error reading result from "' + output_dir + '"'

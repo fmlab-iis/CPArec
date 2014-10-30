@@ -27,8 +27,8 @@ rl_mgr.setScriptPath(_abs_path(_tmp_dir_g + "/rl_script"))
 rl_mgr.setOutputPath(_abs_path(_tmp_dir_g + "/rl_summary"))
 
 options = {
-  "bin_file"  :_abs_path("../ext_analyzer/CPAchecker-1.3.4-unix/scripts/cpa.sh"),
-  "conf_file" :_abs_path("../ext_analyzer/CPAchecker-conf/UsedConfiguration.properties"),
+  "bin_file"  :_abs_path("../ext_analyzer/CPAchecker-1.2.11-svcomp14b-unix/scripts/cpa.sh"),
+  "conf_file" :_abs_path("../ext_analyzer/CPAchecker-conf/myCPA-PredAbstract-LIA-fast.properties"),
   "output_dir":_abs_path(_tmp_dir_g + "/proof")}
 basic_analyzer.set_paths(options)
 

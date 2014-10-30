@@ -40,7 +40,11 @@ def analyze(rf_prog, entry_func="main"):
   args.append( rf_prog.create_file() )
   with open(os.devnull, "w") as null_file:
     # Call Verifier
-    out_str = subprocess.check_output(args, universal_newlines=True, stderr=null_file)
+    try:
+      out_str = subprocess.check_output(args, universal_newlines=True, stderr=null_file)
+    except subprocess.CalledProcessError:
+      print ("Error Analyzer terminates unexpectedly")
+      raise RuntimeError
     # TODO logging
     # logging.info(out_str)
   null_file.close()
