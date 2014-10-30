@@ -31,9 +31,8 @@ def eliminateQuantifier(formula, var_list):
   cmd = "off nosplit;\n"
   cmd += "load_package redlog;\n"
   cmd += "rlset pasf;\n"
-  if not var_list:
-    cmd += "psi := (" + formula + ");\n"
-  else:
+  cmd += "psi := (" + formula + ");\n"
+  if var_list:
     rl_list = '{'
     for var in var_list:
       rl_list += var + ','
@@ -54,4 +53,10 @@ def eliminateQuantifier(formula, var_list):
   with open(_out_path_g, "r") as summary_file:
     expr = summary_file.read().replace('\n', '')
   summary_file.close()
+  if len(expr) > 32000:
+    print ("Exception: quantified formula too big.")
+    raise RuntimeError
+  if expr.find('#') != -1:
+    print ("Exception: unknown symbol in quantified formula")
+    raise RuntimeError
   return expr

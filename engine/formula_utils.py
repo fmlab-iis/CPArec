@@ -75,9 +75,6 @@ def forall_except(var_list, formula):
   # Call quantifier
   new_formula = rl_mgr.eliminateQuantifier(new_formula, qe_list)
 
-  if new_formula.find('#') != -1:
-    print ("Unknown symbol in quantified formula, abort")
-    raise RuntimeError
  
   def replace_func(match_obj):
     name = match_obj.group(0)
