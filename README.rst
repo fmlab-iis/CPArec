@@ -51,7 +51,7 @@ To analyze a C program, please type::
   $ python <path/to/>CPArec/main.py <path/to/>program.c
   
 CPArec will print verification result on the screen and indicate the directory 
-where anlysis result is stored.
+where proof is stored.
   
 For further usage help, please type::
 
