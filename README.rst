@@ -61,7 +61,8 @@ For further usage help, please type::
 Prebuilt Release
 ----------------
 
-* CPArec-v0.1-alpha will be available soon.
+* `CPArec-v0.1-alpha <https://drive.google.com/open?id=0B17ndKIRA_DYXzBEN0lJYkhIUUk&authuser=0>`_
+  is available now.
 
 
 -------
