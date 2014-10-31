@@ -49,9 +49,7 @@ def analyze(rf_prog, entry_func="main"):
     # logging.info(out_str)
   null_file.close()
 
-  func_names = map(lambda f: f.get_name(), rf_prog.get_unwound_funcs())
-
-  return AnalysisResultFactory.build_result("CPA", func_names, __paths_g["output_dir"])
+  return AnalysisResultFactory.build_result("CPA", rf_prog, __paths_g["output_dir"])
 
 class AnalysisResultFactory(object):
   factories = {}
@@ -64,8 +62,9 @@ class AnalysisResultFactory(object):
     return AnalysisResultFactory.factories[fid].build(func_names, output_dir)
 
 class AnalysisResult(object):
-  def __init__(self, func_names, output_dir):
-    self._func_list = func_names
+  def __init__(self, rf_prog, output_dir):
+    self._last_prog = rf_prog
+    self._func_list = map(lambda f: f.get_name(), rf_prog.get_unwound_funcs())
     self._proof_dir = output_dir + '/'
   def __str__(self):
     return self._getResult()
@@ -89,7 +88,7 @@ class Pass(AnalysisResult):
     raise NotImplementedError
 
 class Unknown(AnalysisResult):
-  def __init__(self, func_names, output_dir):
+  def __init__(self, rf_prog, output_dir):
     pass
   def _getResult(self):
     return 'Unknown'

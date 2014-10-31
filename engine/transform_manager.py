@@ -3,7 +3,7 @@ import re
 
 __tran_path_g = ""
 __output_path_g = ""
-__count_g = 0
+#__count_g = 0
 
 
 def set_tran_path(path):
@@ -14,7 +14,7 @@ def set_output_path(path):
   __output_path_g = path
 
 def _call_tran(p_args, p_input):
-  global __tran_path_g, __output_path_g, __count_g
+  global __tran_path_g, __output_path_g#, __count_g
   assert __tran_path_g != "" and __output_path_g != "" 
   args = [__tran_path_g]
   args.extend(p_args)
@@ -22,8 +22,8 @@ def _call_tran(p_args, p_input):
   # Insert definition of assume/assert function
   args.append("-i")
   # Set Output File
-  output_name = __output_path_g + "/tmp"+str(__count_g)+".c"
-  __count_g = __count_g + 1
+  output_name = __output_path_g + "/transformed.c"#"/tmp"+str(__count_g)+".c"
+  #__count_g = __count_g + 1
   args.extend(["-o", output_name])
   # Set Input File
   args.append(p_input)

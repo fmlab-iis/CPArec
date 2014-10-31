@@ -9,7 +9,7 @@ from formula_utils import b_false, disjunction, substitute
 
 class CPA_Factory:
   @classmethod
-  def build(cls, func_names, output_dir):
+  def build(cls, rf_prog, output_dir):
     # TODO Read config to get filename
     with open(output_dir+"/Statistics.txt", "r") as stats:
       for line in stats:
@@ -19,17 +19,17 @@ class CPA_Factory:
           result = (re.search(r"(?P<result>^[A-Z]+)",line[begin:])).group("result")
     stats.close()
  
-    if result == 'SAFE'   : return CPA_Pass(func_names, output_dir)
-    if result == 'UNSAFE' : return CPA_Error(func_names, output_dir)
-    if result == 'UNKNOWN': return Unknown(func_names, output_dir)
+    if result == 'SAFE'   : return CPA_Pass(rf_prog, output_dir)
+    if result == 'UNSAFE' : return CPA_Error(rf_prog, output_dir)
+    if result == 'UNKNOWN': return Unknown(rf_prog, output_dir)
  
     assert 0, 'Error reading result from "' + output_dir + '"'
-    return Unknown(func_names, output_dir)
+    return Unknown(rf_prog, output_dir)
 
 # TODO Construct error path instead of variable assignment
 class CPA_Error(Error):
-  def __init__(self, func_names, output_dir):
-    Error.__init__(self, func_names, output_dir)
+  def __init__(self, rf_prog, output_dir):
+    Error.__init__(self, rf_prog, output_dir)
     self.__var_assign = None
 
   def __parse_assignment(self):
@@ -59,8 +59,8 @@ class CPA_Error(Error):
     return self.__var_assign
 
 class CPA_Pass(Pass):
-  def __init__(self, func_names, output_dir):
-    Pass.__init__(self, func_names, output_dir)
+  def __init__(self, rf_prog, output_dir):
+    Pass.__init__(self, rf_prog, output_dir)
     self.__func2inv_pairs = None
 
   def __parse_invariants(self):

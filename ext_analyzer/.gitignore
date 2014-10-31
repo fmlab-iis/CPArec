@@ -1,4 +1,5 @@
 *
+!*-conf/
+!*-conf/*
 !.gitignore
-!CPAchecker-conf
 

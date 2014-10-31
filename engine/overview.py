@@ -1,5 +1,4 @@
 import sys
-from six import print_
 
 import basic_analyzer
 
@@ -50,5 +49,5 @@ def overview(program):
   return result
 
 def print_progress(string):
-  print_ (string, end='')
+  sys.stdout.write(string)
   sys.stdout.flush()
