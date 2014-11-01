@@ -39,17 +39,17 @@ basic_analyzer.AnalysisResultFactory.add_factory("CPA", CPA_Factory)
 def run(design_file, out_dir):
   try:
     result = overview.run( Program(design_file) )
+    if not os.path.exists(out_dir):
+      os.makedirs(out_dir)
+    out_dir = tempfile.mkdtemp(prefix="CPArec-proof-", dir=out_dir)
+
+    shutil.move(_tmp_dir_g + "/proof", out_dir)
+    shutil.move(_tmp_dir_g + "/transformed.c", out_dir)
+    print ("")
+    print ('Proof for "' + str(result) + '" can be found at "' + out_dir + '"')
   except RuntimeError:
     result = 'Unknown'
 
-  if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
-  out_dir = tempfile.mkdtemp(prefix="CPArec-proof-", dir=out_dir)
-
-  shutil.move(_tmp_dir_g + "/proof", out_dir)
-  shutil.move(_tmp_dir_g + "/transformed.c", out_dir)
-  print ("")
-  print ('Proof for "' + str(result) + '" can be found at "' + out_dir + '"')
   shutil.rmtree(_tmp_dir_g, ignore_errors=True)
 
   return result
