@@ -9,6 +9,7 @@ import basic_analyzer
 import redlog_manager as rl_mgr
 
 from cpa_checker import CPA_Factory
+from proof_report import ErrorProof
 
 _this_dir_g = os.path.dirname(__file__)
 
@@ -36,15 +37,23 @@ basic_analyzer.set_paths(options)
 # Register available analyzers
 basic_analyzer.AnalysisResultFactory.add_factory("CPA", CPA_Factory)
 
+proof_report.set_template_path(_abs_path("./template.graphml"))
+
 def run(design_file, out_dir):
   try:
-    result = overview.run( Program(design_file) )
+    program = Program(design_file)
+    result = overview.run( program )
     if not os.path.exists(out_dir):
       os.makedirs(out_dir)
     out_dir = tempfile.mkdtemp(prefix="CPArec-proof-", dir=out_dir)
 
     shutil.move(_tmp_dir_g + "/proof", out_dir)
     shutil.move(_tmp_dir_g + "/transformed.c", out_dir)
+
+    if result == "Error": # TODO Produce real witness
+      proof = ErrorProof(program, result)
+      proof.print_witness(out_dir + "/witness.graphml")
+
     print ("")
     print ('Proof for "' + str(result) + '" can be found at "' + out_dir + '"')
   except RuntimeError:
