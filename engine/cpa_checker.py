@@ -3,7 +3,9 @@ import re
 from basic_analyzer import AnalysisResultFactory
 from basic_analyzer import Pass, Error, Unknown
 
-from cpa_output_reader import ARGHandler, CFAHandler, AbstractionHandler
+from cpa_output_reader import CFAHandler
+from cpa_output_reader import ErrorPathHandler
+from cpa_output_reader import ARGHandler, AbstractionHandler
 
 from formula_utils import b_false, disjunction, substitute
 
@@ -30,33 +32,78 @@ class CPA_Factory:
 class CPA_Error(Error):
   def __init__(self, rf_prog, output_dir):
     Error.__init__(self, rf_prog, output_dir)
-    self.__var_assign = None
+    self.__start_exit_trace = None
 
-  def __parse_assignment(self):
+  def __parse_start_exit_trace(self):
+    # TODO Change to generator
     # TODO Read config to get filename
-    file_name = self._proof_dir + "ErrorPath.0.assignment.txt"
-    self.__var_assign = {}
-    with open(file_name, "r") as assignment_file:
-      for line in assignment_file:
-        pattern = "(?P<var>(\w+::)?\w+)@(?P<seq>\d+) : (?P<type>\w+): (?P<value>[+-]?\d+(?:\.\d+)?)"
-        match_obj = re.search(pattern, line)
-        if match_obj:
-          var = match_obj.group('var')
-          seq = int(match_obj.group('seq'))
-          value = match_obj.group('value')
-          if not var in self.__var_assign:
-            self.__var_assign[ var ] = []
-          self.__var_assign[ var ].append( (seq, value) )
-    assignment_file.close()
+    file_name = self._proof_dir + "ErrorPath.0.txt"
+    errpath_handler = ErrorPathHandler(file_name)
 
-    for var, values in self.__var_assign.iteritems():
-      values.sort()
-      self.__var_assign[var] = map(lambda x: x[1], values)
+    path = iter(errpath_handler.get_error_path())
+    trace = []
+    node = path.next()
+    edge = None 
+    while True:
+      prev_node = node
+      prev_edge = edge
+      try:
+        edge = path.next()
+        node = path.next()
+        if edge['stmt'] == "Function start dummy edge":
+          name = CPA_Error.__parse_callee( prev_edge['stmt'] )
+          if name == 'main':
+            continue
+          key = 'start'
+          assign = CPA_Error.__parse_assignment(name, prev_node['assign'])
+          assign+= CPA_Error.__parse_assignment(name, node['assign'])
+        elif edge['stmt'].startswith("Return edge from "):
+          name = CPA_Error.__parse_return_from( edge['stmt'] )
+          key = 'exit'
+          assign = CPA_Error.__parse_assignment(name, node['assign'])
+        else:
+          continue
 
-  def get_variable_assignment(self):
-    if not self.__var_assign:
-      self.__parse_assignment()
-    return self.__var_assign
+        elem = (key, name, assign)
+        trace.append(elem)
+      except StopIteration:
+        break
+    self.__start_exit_trace = trace 
+
+  def get_function_start_exit_trace(self):
+    if not self.__start_exit_trace:
+      self.__parse_start_exit_trace()
+    return self.__start_exit_trace
+
+  @classmethod
+  def __parse_callee(cls, stmt):
+    pattern = r"(?P<callee>[_A-Za-z]\w*)\(.*\)"
+    m = re.search(pattern, stmt)
+    assert m, 'Malformed call "' + stmt + '" in ErrorPath'
+    return m.group('callee')
+
+  @classmethod
+  def __parse_return_from(cls, stmt):
+    pattern = r"Return edge from (?P<callee>[_A-Za-z]\w*) to ([_A-Za-z]\w*)"
+    m = re.search(pattern, stmt)
+    assert m, 'Malformed call return "' + stmt + '" in ErrorPath'
+    return m.group('callee')
+
+  @classmethod
+  def __parse_assignment(cls, name, assign):
+    def get_var_value(x):
+      # TODO build a parser for this common pattern
+      pattern = r"((?P<scope>[_A-Za-z]\w*)::)?(?P<var>[_A-Za-z]\w*)"
+      m = re.search(pattern, x['var'])
+      assert m
+      scope = m.group('scope')
+      var   = m.group('var')
+      # Only global variables or variables in scope
+      if not scope or scope == name:
+        return (var, x['value'])
+      return None
+
+    return filter(None, map(get_var_value, assign))
 
 class CPA_Pass(Pass):
   def __init__(self, rf_prog, output_dir):

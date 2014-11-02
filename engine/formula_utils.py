@@ -36,7 +36,7 @@ def b_n_ary_op(op, *expr_list):
     string = string + ' ( ' + expr + ' ) ' + op
   return string[:-len(op)]
 
-_var_pattern_g = r'{(?P<var>([a-zA-Z_]\w*::)?[a-zA-Z_]\w*)}'
+_var_pattern_g = r'{(?P<var>([_A-Za-z]\w*::)?[_A-Za-z]\w*)}'
 def _get_vars(formula):
   global _var_pattern_g
   var_list = [m.group('var') for m in re.finditer(_var_pattern_g, formula)]

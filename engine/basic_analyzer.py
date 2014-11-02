@@ -80,6 +80,8 @@ class AnalysisResult(object):
 class Error(AnalysisResult):
   def _getResult(self):
     return 'Error'
+  def get_function_start_exit_trace(self):
+    raise NotImplementedError
 
 class Pass(AnalysisResult):
   def _getResult(self):

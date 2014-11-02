@@ -7,34 +7,56 @@ from formula_utils import get_def_list
 def grouped(iterable, n):
   return zip(*[iter(iterable)]*n)
 
-"""
-Not used
-Find function entry and exit nodes in Conrol Flow Automata
-"""
-"""
-def find_function_node_pairs(file_name, func_names):
-  with open(file_name, 'r') as cfa_file:
-    cfa_info = json.load(cfa_file)
-  cfa_file.close()
+class ErrorPathHandler:
+  def __init__(self, file_name):
+    self.__error_path = []
+    self.__parse_error_path(file_name)
 
-  func_dict = dict()
-  for key in func_names:
-    func_dict[key] = dict({'s_id': None, 'e_id': None})
+  def __parse_error_path(self, file_name):
+    # TODO Rewrite as generator
+    with open(file_name, 'r') as err_path_file:
+      # Read first line and build first edge
+      line = err_path_file.next()
+      edge = ErrorPathHandler.__parse_line_as_edge(line)
+      node = {'nid': edge["source"], 'assign': []} 
+      self.__error_path.append(node) # Initial node
+      self.__error_path.append(edge)
+      node = {'nid': edge["target"], 'assign': []} 
+      self.__error_path.append(node)
 
-  for edge in cfa_info["edges"].values():
-    if edge['stmt'].startswith("Function start dummy edge"):
-      src_id = edge['source']
-      func_name = cfa_info["nodes"][str(src_id)]['func']
-      if func_name in func_dict:
-        func_dict[func_name]['s_id'] = src_id
-    elif edge['type'] == 'ReturnStatementEdge':
-      tgt_id = edge['target']
-      func_name = cfa_info["nodes"][str(tgt_id)]['func']
-      if func_name in func_dict:
-        func_dict[func_name]['e_id'] = tgt_id
+      for line in err_path_file:
+        prev_node = self.__error_path[-1]
+        if line.startswith("Line"):
+          edge = ErrorPathHandler.__parse_line_as_edge(line)
+          node = {'nid': edge['source'], 'assign': []}
+          assert node['nid'] == prev_node['nid']
+          self.__error_path.append(edge)
+          node = {'nid': edge['target'], 'assign': []} 
+          self.__error_path.append(node)
+        else:
+          assign = ErrorPathHandler.__parse_assignment(line)
+          # Append assignment to node
+          prev_node['assign'].append(assign)
 
-  return func_dict
-"""
+    err_path_file.close()
+
+  def get_error_path(self):
+    return self.__error_path
+
+  @classmethod
+  def __parse_line_as_edge(cls, line):
+    pattern = r"Line (?P<line_no>\d+):\s+N(?P<source>\d+) -{(?P<stmt>[^{}]*)}-> N(?P<target>\d+)"
+    match_obj = re.search(pattern, line)
+    assert match_obj, 'Malformed edge "'+ line + '" in ErrorPath'
+    return match_obj.groupdict()
+
+  @classmethod
+  def __parse_assignment(cls, line):
+    pattern = "\s+(?P<var>(\w+::)?\w+)@(?P<seq>\d+) : (?P<type>\w+): (?P<value>[+-]?\d+(?:\.\d+)?)"
+    match_obj = re.search(pattern, line)
+    assert match_obj, "Malformed assignment in ErrorPath"
+    return match_obj.groupdict()
+
 class ARGHandler:
   def __init__(self, arg_file_name):
     self.__arg = networkx.read_dot(arg_file_name)
@@ -154,7 +176,7 @@ class AbstractionHandler():
       self.__formulae_dict[key] = def_list[ def_id ]
 
   """
-  Rewrite file to  smt2 format
+  Rewrite file to SMTLib2 format
   Also keep track of mapping from ABS# to assert
   """
   def __rewrite_to_smt2(self, file_name):

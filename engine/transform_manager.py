@@ -85,6 +85,14 @@ class Program:
     return self.__rec_funcs
   def get_unwound_funcs(self):
     return self.__uwd_funcs
+  def find_original_func(self, func_name):
+    # TODO More robust way to find original name
+    func_name_set = set(map(lambda x: x.get_name(), self.__rec_funcs))
+    pattern = r"(?P<orig_name>[_A-Za-z]\w*)_\d+$"
+    m = re.search(pattern, func_name)
+    if m and m.group('orig_name') in func_name_set:
+        return m.group('orig_name')
+    return func_name
 
   def __duplicate_func(self, func, new_func):
     self.__args.extend(["-d", func, new_func])

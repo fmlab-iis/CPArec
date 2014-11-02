@@ -47,13 +47,14 @@ def run(design_file, out_dir):
       os.makedirs(out_dir)
     out_dir = tempfile.mkdtemp(prefix="CPArec-proof-", dir=out_dir)
 
-    shutil.move(_tmp_dir_g + "/proof", out_dir)
-    shutil.move(_tmp_dir_g + "/transformed.c", out_dir)
-
     if result == "Error": # TODO Produce real witness
+      result.get_function_start_exit_trace()
       proof = ErrorProof(program, result)
       proof.print_witness(out_dir + "/witness.graphml")
 
+
+    shutil.move(_tmp_dir_g + "/proof", out_dir)
+    shutil.move(_tmp_dir_g + "/transformed.c", out_dir)
     print ("")
     print ('Proof for "' + str(result) + '" can be found at "' + out_dir + '"')
   except RuntimeError:
