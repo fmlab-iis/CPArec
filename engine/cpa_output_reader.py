@@ -46,16 +46,18 @@ class ErrorPathHandler:
   @classmethod
   def __parse_line_as_edge(cls, line):
     pattern = r"Line (?P<line_no>\d+):\s+N(?P<source>\d+) -{(?P<stmt>[^{}]*)}-> N(?P<target>\d+)"
-    match_obj = re.search(pattern, line)
+    match_obj = re.match(pattern, line)
     assert match_obj, 'Malformed edge "'+ line + '" in ErrorPath'
     return match_obj.groupdict()
 
   @classmethod
   def __parse_assignment(cls, line):
     pattern = "\s+(?P<var>(\w+::)?\w+)@(?P<seq>\d+) : (?P<type>\w+): (?P<value>[+-]?\d+(?:\.\d+)?)"
-    match_obj = re.search(pattern, line)
+    match_obj = re.match(pattern, line)
     assert match_obj, "Malformed assignment in ErrorPath"
-    return match_obj.groupdict()
+    assign = match_obj.groupdict()
+    assign['seq'] = int( assign['seq'] )
+    return assign
 
 class ARGHandler:
   def __init__(self, arg_file_name):
@@ -157,7 +159,7 @@ class CFAHandler():
     callee = r"(?P<callee>\w+)"
     args = r"\(" + r"(?P<args>\w+(, \w+)*)?" + r"\);$"
     pattern = rcv + callee + args
-    m = re.search(pattern, stmt)
+    m = re.match(pattern, stmt)
     assert m and m.group('callee'), 'Error parsing CFA edge stmt "' + stmt + '"'
     return m.groupdict()
 
@@ -209,14 +211,14 @@ class AbstractionHandler():
     nbrs_abs_id = r"\(" + r"(\d+(,\d+)*)?" + r"\) "
     nid = r"@(\d+):"
     pattern = abs_id + nbrs_abs_id + nid
-    m = re.search(pattern, id_line)
+    m = re.match(pattern, id_line)
     assert m and m.group('id'), 'Error parsing ABS# from "' + id_line + '"'
     return m.group('id')
 
   @classmethod
   def __get_def_id_in_line(cls, id_line):
     pattern = r"\(" + r"assert (?P<id>(\.def_\d+)|true|false)"+ r"\)"
-    m = re.search(pattern, id_line)
+    m = re.match(pattern, id_line)
     assert m and m.group('id'), 'Error parsing .def# from "' + id_line + '"'
     return m.group('id')
 

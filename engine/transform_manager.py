@@ -89,7 +89,7 @@ class Program:
     # TODO More robust way to find original name
     func_name_set = set(map(lambda x: x.get_name(), self.__rec_funcs))
     pattern = r"(?P<orig_name>[_A-Za-z]\w*)_\d+$"
-    m = re.search(pattern, func_name)
+    m = re.match(pattern, func_name)
     if m and m.group('orig_name') in func_name_set:
         return m.group('orig_name')
     return func_name

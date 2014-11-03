@@ -18,7 +18,7 @@ class CPA_Factory:
         pattern = "Verification result: "
         if line.startswith(pattern):
           begin = len(pattern)
-          result = (re.search(r"(?P<result>^[A-Z]+)",line[begin:])).group("result")
+          result = (re.match(r"(?P<result>^[A-Z]+)",line[begin:])).group("result")
     stats.close()
  
     if result == 'SAFE'   : return CPA_Pass(rf_prog, output_dir)
@@ -52,9 +52,11 @@ class CPA_Error(Error):
         node = path.next()
         if edge['stmt'] == "Function start dummy edge":
           name = CPA_Error.__parse_callee( prev_edge['stmt'] )
-          if name == 'main':
+          if not name or name == 'main':
             continue
           key = 'start'
+          # XXX Strange way to get assignment 
+          # Due to bugs in CPAchecker-1.2.11-svcomp14b
           assign = CPA_Error.__parse_assignment(name, prev_node['assign'])
           assign+= CPA_Error.__parse_assignment(name, node['assign'])
         elif edge['stmt'].startswith("Return edge from "):
@@ -64,7 +66,17 @@ class CPA_Error(Error):
         else:
           continue
 
+        # XXX Strange way to get assignment 
+        # Due to bugs in CPAchecker-1.2.11-svcomp14b
+        var_value = {}
+        for var, seq, value in assign:
+          if not var in var_value:
+            var_value[var] = (seq, value)
+          else: # TODO Temporary fix for multiple value
+            var_value[var] = None
+        assign = [(x, var_value[x][1]) for x in var_value if var_value[x]]
         elem = (key, name, assign)
+        print elem
         trace.append(elem)
       except StopIteration:
         break
@@ -78,14 +90,15 @@ class CPA_Error(Error):
   @classmethod
   def __parse_callee(cls, stmt):
     pattern = r"(?P<callee>[_A-Za-z]\w*)\(.*\)"
-    m = re.search(pattern, stmt)
-    assert m, 'Malformed call "' + stmt + '" in ErrorPath'
+    m = re.match(pattern, stmt)
+    # assert m, 'Malformed call "' + stmt + '" in ErrorPath'
+    if not m: return None
     return m.group('callee')
 
   @classmethod
   def __parse_return_from(cls, stmt):
     pattern = r"Return edge from (?P<callee>[_A-Za-z]\w*) to ([_A-Za-z]\w*)"
-    m = re.search(pattern, stmt)
+    m = re.match(pattern, stmt)
     assert m, 'Malformed call return "' + stmt + '" in ErrorPath'
     return m.group('callee')
 
@@ -94,13 +107,13 @@ class CPA_Error(Error):
     def get_var_value(x):
       # TODO build a parser for this common pattern
       pattern = r"((?P<scope>[_A-Za-z]\w*)::)?(?P<var>[_A-Za-z]\w*)"
-      m = re.search(pattern, x['var'])
+      m = re.match(pattern, x['var'])
       assert m
       scope = m.group('scope')
       var   = m.group('var')
       # Only global variables or variables in scope
       if not scope or scope == name:
-        return (var, x['value'])
+        return (var, x['seq'], x['value'])
       return None
 
     return filter(None, map(get_var_value, assign))
