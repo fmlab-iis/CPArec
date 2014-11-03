@@ -76,7 +76,6 @@ class CPA_Error(Error):
             var_value[var] = None
         assign = [(x, var_value[x][1]) for x in var_value if var_value[x]]
         elem = (key, name, assign)
-        print elem
         trace.append(elem)
       except StopIteration:
         break

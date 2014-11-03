@@ -65,11 +65,18 @@ Prebuilt Release
   is available now.
 
 
--------
-Contact
--------
+-----------
+Maintainers
+-----------
+This project is maintained by Programing Language and Formal Method (PLFM)
+group in the Institute of Information Science, Academia Sinica, Taiwan.
 
-Under construction
+Programmers
+~~~~~~~~~~~
+* Tsai, Ming-Hsien
+* Hsieh, Chiao 
 
+Further contact information will be available soon.
 
 .. _CPAchecker: http://cpachecker.sosy-lab.org/
+
